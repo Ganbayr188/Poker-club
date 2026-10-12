@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Poker Club</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#10151c;color:white;
+font-family:Arial,sans-serif;text-align:center}
+header{padding:20px;background:#19232e}
+h1{color:#e8c56a;margin:0}
+main{padding:18px}
+.table{background:#126344;border:9px solid #70492e;
+border-radius:48%;min-height:270px;max-width:500px;
+margin:20px auto;padding:35px 12px;
+display:flex;flex-direction:column;
+align-items:center;justify-content:center;
+box-shadow:0 8px 25px #0008}
+.cards{display:flex;gap:9px;margin:20px}
+.card{background:white;color:#151515;border-radius:7px;
+width:43px;height:62px;display:grid;
+place-items:center;font-size:23px;font-weight:bold}
+.red{color:#dc303d}
+button{border:0;border-radius:9px;padding:13px 18px;
+margin:5px;font-weight:bold;background:#e8c56a;
+color:#171717;font-size:15px}
+button:active{transform:scale(.97)}
+.panel{background:#1b2632;padding:16px;
+border-radius:14px;max-width:500px;margin:15px auto}
+.small{color:#c3ccd5;font-size:14px}
+</style>
+</head>
+<body>
+<header>
+<h1>♠ POKER CLUB</h1>
+<p class="small">Texas Hold'em · Туршилтын ширээ</p>
+</header>
+<main>
+<div class="panel">
+Таны виртуал чип:
+<h2 id="chips">1000</h2>
+<span class="small">Бодит мөнгө биш</span>
+</div>
+<div class="table">
+<div>👤 Тоглогч 2</div>
+<div class="small">Нийт чип: <span id="pot">0</span></div>
+<div class="cards" id="cards">
+<div class="card">?</div>
+<div class="card">?</div>
+<div class="card">?</div>
+<div class="card">?</div>
+<div class="card">?</div>
+</div>
+<div>👤 Та</div>
+<div class="cards" id="hand">
+<div class="card">?</div>
+<div class="card">?</div>
+</div>
+</div>
+<div class="panel">
+<p id="status">Шинэ тоглолт эхлүүлээрэй</p>
+<button onclick="deal()">Карт тараах</button>
+<button onclick="bet()">100 чип бооцоо</button>
+<button onclick="resetGame()">Дахин эхлэх</button>
+</div>
+<p class="small">Энэ нь зөвхөн нэг төхөөрөмж дээр ажиллах
+демо загвар. Олон тоглогчийн сервер холбогдоогүй.</p>
+</main>
+<script>
+let chips=1000,pot=0,used=false;
+const suits=["♠","♥","♦","♣"];
+function randomCard(){
+let n=Math.floor(Math.random()*13)+1;
+let s=suits[Math.floor(Math.random()*4)];
+return {n,s};
+}
+function label(c){
+return (c.n===1?"A":c.n===11?"J":
+c.n===12?"Q":c.n===13?"K":c.n)+c.s;
+}
+function makeCard(c){
+return '<div class="card '+(
+c.s==="♥"||c.s==="♦"?"red":"")+'">'+label(c)+'</div>';
+}
+function deal(){
+if(used){return}
+used=true;
+let deck=[];
+for(let s of suits)for(let n=1;n<=13;n++)
+deck.push({n,s});
+deck.sort(()=>Math.random()-.5);
+document.getElementById("cards").innerHTML=
+deck.slice(0,5).map(makeCard).join("");
+document.getElementById("hand").innerHTML=
+deck.slice(5,7).map(makeCard).join("");
+document.getElementById("status").textContent=
+"Карт тараагдлаа. Энэ демо хожлыг тооцохгүй.";
+}
+function bet(){
+if(!used){
+document.getElementById("status").textContent=
+"Эхлээд карт тараана уу.";
+return;
+}
+if(chips<100){
+document.getElementById("status").textContent=
+"Чип хүрэлцэхгүй. Дахин эхлүүлнэ үү.";
+return;
+}
+chips-=100;pot+=100;
+document.getElementById("chips").textContent=chips;
+document.getElementById("pot").textContent=pot;
+}
+function resetGame(){
+chips=1000;pot=0;used=false;
+document.getElementById("chips").textContent=chips;
+document.getElementById("pot").textContent=pot;
+document.getElementById("cards").innerHTML=
+'<div class="card">?</div>'.repeat(5);
+document.getElementById("hand").innerHTML=
+'<div class="card">?</div>'.repeat(2);
+document.getElementById("status").textContent=
+"Шинэ тоглолт эхлүүлээрэй";
+}
+</script>
+</body>
+</html>
